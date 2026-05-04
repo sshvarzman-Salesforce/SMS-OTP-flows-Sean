@@ -15,10 +15,8 @@ This repository packages SMS OTP verification assets from `MainSDOSean` for reus
 
 - `metadata/flows/Send_SMS_Verification.flow`
 - `metadata/flows/Verify_SMS_Code_MFA.flow`
-- `metadata/objects/MessagingSession.object` (includes field `Input_Phone__c`)
-- `metadata/messagingChannels/TEXT_US_12012775572.messagingChannel`
 - `metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition`
-- `package.xml` (flows + deployable dependencies)
+- `package.xml` (flows + `OTP_SMS` conversation definition)
 
 ## Deploy flows to another org
 
@@ -39,20 +37,17 @@ sf project deploy start \
 
 Review these before deploying to another org:
 
-- **Dependencies now included in this package**
-  - `MessagingSession.Input_Phone__c` custom field metadata is included.
-  - Messaging Channel `TEXT_US_12012775572` metadata is included.
+- **Dependencies included in this package**
   - Conversation Message Definition `OTP_SMS` metadata is included.
-  - These dependencies can be pre-deployed together with the flows via `package.xml`.
 
 - **Custom field dependency**
   - `Send_SMS_Verification` references `MessagingSession.Input_Phone__c`.
-  - This repo includes metadata for that field (`metadata/objects/MessagingSession.object`).
+  - Create this custom field in each target org before using the flow.
 
 - **Hardcoded Messaging Channel Id**
   - `Send_SMS_Verification` creates `MessagingEndUser` with `MessagingChannelId = 0MjHn000000PFypKAG`.
-  - This repo includes metadata for the matching channel full name `TEXT_US_12012775572`.
-  - In orgs where that channel cannot be created with same ID, update the flow `MessagingChannelId` input after deploy.
+  - Create the messaging channel in each target org from scratch.
+  - Then update the flow to use that target org channel Id where `MessagingChannelId` is set.
 
 - **Messaging template/definition dependency**
   - `Send_SMS_Verification` calls `sendConversationMessages` with `messageDefinitionName = OTP_SMS`.
