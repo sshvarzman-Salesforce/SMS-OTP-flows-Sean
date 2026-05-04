@@ -41,6 +41,43 @@ sf project deploy start \
    - `agent-actions/genAiFunctionDefinitions.json`
    - `agent-actions/genAiPluginFunctionDefs.json`
 
+## Prerequisites and dependencies (important)
+
+Review these before deploying to another org:
+
+- **Custom field dependency**
+  - `Send_SMS_Verification` references `MessagingSession.Input_Phone__c`.
+  - If this custom field does not exist in target org, deployment/runtime will fail.
+
+- **Hardcoded Messaging Channel Id**
+  - `Send_SMS_Verification` creates `MessagingEndUser` with `MessagingChannelId = 0MjHn000000PFypKAG`.
+  - This is org-specific and will usually be invalid in another environment.
+  - Update the flow to the target org's Messaging Channel Id after deploy (or before deploy in source).
+
+- **Messaging template/definition dependency**
+  - `Send_SMS_Verification` calls `sendConversationMessages` with `messageDefinitionName = OTP_SMS`.
+  - Ensure a matching messaging definition/template named `OTP_SMS` exists and is active in target org.
+
+- **Invocable action availability**
+  - Flows call platform actions:
+    - `generateVerificationCode`
+    - `sendConversationMessages`
+    - `verifyCustomerCode`
+  - These require the related Salesforce features/licenses to be enabled in target org.
+
+- **Object/feature assumptions**
+  - `Send_SMS_Verification` expects `VoiceCall` and `MessagingSession` records as launch context.
+  - It reads `VoiceCall.FromPhoneNumber` and `MessagingSession.Input_Phone__c`.
+
+- **Template override dependency**
+  - `Verify_SMS_Code_MFA` includes:
+    - `overriddenFlow = SvcCopilotTmpl__VerifyCode`
+  - If this template flow is absent in target org, align/remove this override after deploy.
+
+- **Agent Action mapping**
+  - `agent-actions/*.json` include org-specific IDs (`PluginId`, `InvocationTarget`).
+  - IDs are not portable; recreate actions and map by flow API name/label in target org.
+
 ## Source org details
 
 - Org alias: `MainSDOSean`
