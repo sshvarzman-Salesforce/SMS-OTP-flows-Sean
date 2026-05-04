@@ -1,5 +1,14 @@
 # SMS Verification OTP flows
 
+## Repository summary
+
+This repository is a deployment package for two Salesforce flows that implement an SMS OTP verification process end-to-end:
+
+1. `Send_SMS_Verification` generates a random one-time SMS verification code and sends it to the customer.
+2. `Verify_SMS_Code_MFA` validates the code entered by the customer to confirm it matches the issued OTP.
+
+Together, these flows support a secure SMS-based verification journey. The implementation is designed so the OTP is generated and delivered to the customer, and later validated, without exposing the raw verification code in the normal flow outputs used by agents or downstream process steps.
+
 This repository packages SMS OTP verification assets from `MainSDOSean` for reuse in other Salesforce orgs.
 
 ## Included metadata
