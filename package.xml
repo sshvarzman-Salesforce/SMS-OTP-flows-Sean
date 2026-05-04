@@ -6,6 +6,10 @@
         <name>Flow</name>
     </types>
     <types>
+        <members>MessagingSession.Input_Phone__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
         <members>OTP_SMS</members>
         <name>ConversationMessageDefinition</name>
     </types>

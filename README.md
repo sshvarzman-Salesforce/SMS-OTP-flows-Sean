@@ -15,8 +15,9 @@ This repository packages SMS OTP verification assets from `MainSDOSean` for reus
 
 - `metadata/flows/Send_SMS_Verification.flow`
 - `metadata/flows/Verify_SMS_Code_MFA.flow`
+- `metadata/objects/MessagingSession.object` (contains `Input_Phone__c` field metadata)
 - `metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition`
-- `package.xml` (flows + `OTP_SMS` conversation definition)
+- `package.xml` (flows + `MessagingSession.Input_Phone__c` + `OTP_SMS`)
 
 ## Deploy flows to another org
 
@@ -38,11 +39,12 @@ sf project deploy start \
 Review these before deploying to another org:
 
 - **Dependencies included in this package**
+  - `MessagingSession.Input_Phone__c` custom field metadata is included.
   - Conversation Message Definition `OTP_SMS` metadata is included.
 
 - **Custom field dependency**
   - `Send_SMS_Verification` references `MessagingSession.Input_Phone__c`.
-  - Create this custom field in each target org before using the flow.
+  - This package deploys the field (`MessagingSession.Input_Phone__c`).
 
 - **Hardcoded Messaging Channel Id**
   - `Send_SMS_Verification` creates `MessagingEndUser` with `MessagingChannelId = 0MjHn000000PFypKAG`.
