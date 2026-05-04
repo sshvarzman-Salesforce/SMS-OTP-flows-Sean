@@ -5,5 +5,17 @@
         <members>Verify_SMS_Code_MFA</members>
         <name>Flow</name>
     </types>
+    <types>
+        <members>MessagingSession</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>TEXT_US_12012775572</members>
+        <name>MessagingChannel</name>
+    </types>
+    <types>
+        <members>OTP_SMS</members>
+        <name>ConversationMessageDefinition</name>
+    </types>
     <version>66.0</version>
 </Package>

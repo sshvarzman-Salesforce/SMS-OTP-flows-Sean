@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConversationMessageDefinition xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <constants>
+        <constantType>Image</constantType>
+        <primitiveValues>
+            <contentAssetName>Gemini_Generated_Image_rvo075rvo075</contentAssetName>
+            <type>ImageAsset</type>
+        </primitiveValues>
+    </constants>
+    <constants>
+        <constantType>Title</constantType>
+        <primitiveValues>
+            <textValue>Your Link Title Here</textValue>
+            <type>Text</type>
+        </primitiveValues>
+    </constants>
+    <constants>
+        <constantType>Url</constantType>
+        <primitiveValues>
+            <type>Url</type>
+            <urlValue>https://www.example.com</urlValue>
+        </primitiveValues>
+    </constants>
+    <label>OTP SMS</label>
+    <language>en_US</language>
+    <messageLayouts>
+        <formatType>Text</formatType>
+        <layoutItems>
+            <collectionType>None</collectionType>
+            <name>text</name>
+            <primitiveValues>
+                <formulaTemplate>Your verification code is {!$Parameters.Message}. This code will expire in 5 minutes.
+
+If you didn&apos;t make this request, change your password immediately.</formulaTemplate>
+                <type>FormulaTemplate</type>
+            </primitiveValues>
+        </layoutItems>
+        <layoutVariant xsi:nil="true"/>
+        <messageType>StaticContent</messageType>
+    </messageLayouts>
+    <parameters>
+        <parameterType>CustomPrimitive</parameterType>
+        <primitiveTypeDetails>
+            <isList>false</isList>
+            <isRequired>true</isRequired>
+            <label>Message</label>
+            <name>Message</name>
+            <valueType>Text</valueType>
+        </primitiveTypeDetails>
+    </parameters>
+    <type>Notification</type>
+</ConversationMessageDefinition>

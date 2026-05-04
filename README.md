@@ -15,7 +15,10 @@ This repository packages SMS OTP verification assets from `MainSDOSean` for reus
 
 - `metadata/flows/Send_SMS_Verification.flow`
 - `metadata/flows/Verify_SMS_Code_MFA.flow`
-- `package.xml` (Flow members)
+- `metadata/objects/MessagingSession.object` (includes field `Input_Phone__c`)
+- `metadata/messagingChannels/TEXT_US_12012775572.messagingChannel`
+- `metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition`
+- `package.xml` (flows + deployable dependencies)
 
 ## Deploy flows to another org
 
@@ -36,18 +39,24 @@ sf project deploy start \
 
 Review these before deploying to another org:
 
+- **Dependencies now included in this package**
+  - `MessagingSession.Input_Phone__c` custom field metadata is included.
+  - Messaging Channel `TEXT_US_12012775572` metadata is included.
+  - Conversation Message Definition `OTP_SMS` metadata is included.
+  - These dependencies can be pre-deployed together with the flows via `package.xml`.
+
 - **Custom field dependency**
   - `Send_SMS_Verification` references `MessagingSession.Input_Phone__c`.
-  - If this custom field does not exist in target org, deployment/runtime will fail.
+  - This repo includes metadata for that field (`metadata/objects/MessagingSession.object`).
 
 - **Hardcoded Messaging Channel Id**
   - `Send_SMS_Verification` creates `MessagingEndUser` with `MessagingChannelId = 0MjHn000000PFypKAG`.
-  - This is org-specific and will usually be invalid in another environment.
-  - Update the flow to the target org's Messaging Channel Id after deploy (or before deploy in source).
+  - This repo includes metadata for the matching channel full name `TEXT_US_12012775572`.
+  - In orgs where that channel cannot be created with same ID, update the flow `MessagingChannelId` input after deploy.
 
 - **Messaging template/definition dependency**
   - `Send_SMS_Verification` calls `sendConversationMessages` with `messageDefinitionName = OTP_SMS`.
-  - Ensure a matching messaging definition/template named `OTP_SMS` exists and is active in target org.
+  - This repo includes metadata for `OTP_SMS` conversation message definition.
 
 - **Invocable action availability**
   - Flows call platform actions:
