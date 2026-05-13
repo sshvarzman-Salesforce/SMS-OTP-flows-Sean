@@ -1,36 +1,6 @@
 # SMS Verification OTP flows
 
-## Repository summary
-
-This repository is a deployment package for two Salesforce flows that implement an SMS OTP verification process end-to-end:
-
-1. `Send_SMS_Verification` generates a random one-time SMS verification code and sends it to the customer.
-2. `Verify_SMS_Code_MFA` validates the code entered by the customer to confirm it matches the issued OTP.
-
-Together, these flows support a secure SMS-based verification journey. The implementation is designed so the OTP is generated and delivered to the customer, and later validated, without exposing the raw verification code in the normal flow outputs used by agents or downstream process steps.
-
-This repository packages SMS OTP verification assets from `MainSDOSean` for reuse in other Salesforce orgs.
-
-## Included metadata
-
-- `metadata/flows/Send_SMS_Verification.flow`
-- `metadata/flows/Verify_SMS_Code_MFA.flow`
-- `metadata/objects/MessagingSession.object` (contains only `Input_Phone__c` field metadata, not full object deployment)
-- `metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition`
-- `package.xml` (flows + `MessagingSession.Input_Phone__c` + `OTP_SMS`)
-
-## Deploy flows to another org
-
-
-
-```bash
-sf project deploy start \
-  --source-dir metadata/flows/Send_SMS_Verification.flow \
-  --source-dir metadata/flows/Verify_SMS_Code_MFA.flow \
-  --target-org <TARGET_ORG_ALIAS>
-```
-
-## Prerequisites and dependencies (important)
+## Prerequisites and dependencies (important!!!!!!!!!!!!!!!!!!)
 
 Review these before deploying to another org:
 
@@ -67,6 +37,37 @@ Review these before deploying to another org:
   - `Verify_SMS_Code_MFA` includes:
     - `overriddenFlow = SvcCopilotTmpl__VerifyCode`
   - If this template flow is absent in target org, align/remove this override after deploy.
+
+## Repository summary
+
+This repository is a deployment package for two Salesforce flows that implement an SMS OTP verification process end-to-end:
+
+1. `Send_SMS_Verification` generates a random one-time SMS verification code and sends it to the customer.
+2. `Verify_SMS_Code_MFA` validates the code entered by the customer to confirm it matches the issued OTP.
+
+Together, these flows support a secure SMS-based verification journey. The implementation is designed so the OTP is generated and delivered to the customer, and later validated, without exposing the raw verification code in the normal flow outputs used by agents or downstream process steps.
+
+This repository packages SMS OTP verification assets from `MainSDOSean` for reuse in other Salesforce orgs.
+
+## Included metadata
+
+- `metadata/flows/Send_SMS_Verification.flow`
+- `metadata/flows/Verify_SMS_Code_MFA.flow`
+- `metadata/objects/MessagingSession.object` (contains only `Input_Phone__c` field metadata, not full object deployment)
+- `metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition`
+- `package.xml` (flows + `MessagingSession.Input_Phone__c` + `OTP_SMS`)
+
+## Deploy flows to another org
+
+
+
+```bash
+sf project deploy start \
+  --source-dir metadata/flows/Send_SMS_Verification.flow \
+  --source-dir metadata/flows/Verify_SMS_Code_MFA.flow \
+  --target-org <TARGET_ORG_ALIAS>
+```
+
 
 ## Source org details
 
