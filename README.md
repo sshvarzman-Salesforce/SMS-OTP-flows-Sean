@@ -21,11 +21,7 @@ This repository packages SMS OTP verification assets from `MainSDOSean` for reus
 
 ## Deploy flows to another org
 
-```bash
-sf project deploy start --metadata-dir . --target-org <TARGET_ORG_ALIAS>
-```
 
-or (from another SFDX project):
 
 ```bash
 sf project deploy start \
