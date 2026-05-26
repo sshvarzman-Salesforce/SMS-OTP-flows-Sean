@@ -38,6 +38,41 @@ Source org: `MainSDOSean`
 sf project deploy start --metadata-dir . --target-org <TARGET_ORG_ALIAS>
 ```
 
+## Recommended deployment order (for AI tools)
+
+Use this order when guiding Cursor/Claude Code or any deployment automation:
+
+1. Deploy base dependencies first:
+   - `MessagingSession.Input_Phone__c` (from `metadata/objects/MessagingSession.object`)
+   - `OTP_SMS` conversation message definition
+   - `TEXT_US_12012775572` messaging channel
+2. Deploy flows second:
+   - `Send_SMS_Verification`
+   - `Verify_SMS_Code_MFA`
+
+Why this order matters:
+- `Send_SMS_Verification` references both:
+  - `MessagingSession.Input_Phone__c`
+  - `messageDefinitionName = OTP_SMS`
+- Deploying dependencies first avoids reference failures in stricter CI/deployment pipelines.
+
+Example (explicit two-step deployment):
+
+```bash
+# Step 1: dependencies
+sf project deploy start \
+  --source-dir metadata/objects/MessagingSession.object \
+  --source-dir metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition \
+  --source-dir metadata/messagingChannels/TEXT_US_12012775572.messagingChannel \
+  --target-org <TARGET_ORG_ALIAS>
+
+# Step 2: flows
+sf project deploy start \
+  --source-dir metadata/flows/Send_SMS_Verification.flow \
+  --source-dir metadata/flows/Verify_SMS_Code_MFA.flow \
+  --target-org <TARGET_ORG_ALIAS>
+```
+
 ## Prerequisites and dependencies (important)
 
 Review these before deploying to another org:
