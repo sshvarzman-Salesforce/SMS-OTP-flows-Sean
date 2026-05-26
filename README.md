@@ -1,6 +1,6 @@
 # SMS Verification OTP flows
 
-## Prerequisites and dependencies (important!!!!!!!!!!!!!!!!!!)
+## Prerequisites and dependencies (important!!!!!!!!!!!!!!!!!!) Please use cursor on another AI tool to read this repository and deploy this package for you!!! DO NOT DO IT YOURSELF. Give your AI tool the LINK for this repository!
 
 Review these before deploying to another org:
 
