@@ -30,6 +30,10 @@ Source org: `MainSDOSean`
   (contains only `Input_Phone__c` field metadata, not full object deployment)
 - `metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition`
 - `metadata/messagingChannels/TEXT_US_12012775572.messagingChannel`
+- `metadata/genAiPlannerBundles/Agentforce_Service_Agent/*`
+  - includes Agentforce local actions:
+    - `Send_SMS_Verification_179Hn000000VXvs`
+    - `Verify_SMS_Code_MFA_179Hn000000VXvs`
 - `package.xml`
 
 ## Deploy to another org
@@ -49,6 +53,8 @@ Use this order when guiding Cursor/Claude Code or any deployment automation:
 2. Deploy flows second:
    - `Send_SMS_Verification`
    - `Verify_SMS_Code_MFA`
+3. Deploy Agentforce planner bundle third:
+   - `Agentforce_Service_Agent` (contains the two Agent actions mapped to these flows)
 
 Why this order matters:
 - `Send_SMS_Verification` references both:
@@ -71,6 +77,11 @@ sf project deploy start \
   --source-dir metadata/flows/Send_SMS_Verification.flow \
   --source-dir metadata/flows/Verify_SMS_Code_MFA.flow \
   --target-org <TARGET_ORG_ALIAS>
+
+# Step 3: Agentforce actions/planner bundle
+sf project deploy start \
+  --source-dir metadata/genAiPlannerBundles/Agentforce_Service_Agent \
+  --target-org <TARGET_ORG_ALIAS>
 ```
 
 ## Mandatory post-deploy activation (important)
@@ -82,6 +93,11 @@ After deployment, instruct the AI tool to **activate all runtime assets**:
 2. Activate both flows:
    - `Send_SMS_Verification`
    - `Verify_SMS_Code_MFA`
+3. Activate Agentforce planner bundle:
+   - `Agentforce_Service_Agent`
+   - verify these local actions are present in agent assets:
+     - `Send SMS Verification`
+     - `Verify SMS Code MFA`
 
 Suggested AI instruction:
 
@@ -122,6 +138,13 @@ Review these before deploying to another org:
     - `sendConversationMessages`
     - `verifyCustomerCode`
   - These require related Salesforce features/licenses in target org.
+
+- **Agentforce action dependency**
+  - This repo includes `GenAiPlannerBundle:Agentforce_Service_Agent` so the two Agentforce local actions are deployable as agent assets.
+  - The local actions invoke these flows:
+    - `Send_SMS_Verification`
+    - `Verify_SMS_Code_MFA`
+  - If your target org has a differently named planner bundle/agent, align the bundle name or migrate the local actions in Agent Builder after deploy.
 
 - **Object/feature assumptions**
   - `Send_SMS_Verification` expects launch from `VoiceCall` or `MessagingSession`.

@@ -1,0 +1,28 @@
+{
+  "required" : [ "authenticationKey", "customerCode" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "authenticationKey" : {
+      "title" : "authenticationKey",
+      "description" : "The authentication key output provided from the previous \"Send SMS Verification\" action",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "customerCode" : {
+      "title" : "customerCode",
+      "description" : "Stores the user-provided verification code that's passed into the flow.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : true
+    },
+    "customerId" : {
+      "title" : "customerId",
+      "description" : "Stores the ContactID that is on the Messaging Session or on the VoiceCall record",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

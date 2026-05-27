@@ -17,5 +17,9 @@
         <members>TEXT_US_12012775572</members>
         <name>MessagingChannel</name>
     </types>
+    <types>
+        <members>Agentforce_Service_Agent</members>
+        <name>GenAiPlannerBundle</name>
+    </types>
     <version>66.0</version>
 </Package>
