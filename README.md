@@ -66,6 +66,22 @@ Also configure your org-specific channel ID:
    - confirm no channel Id override is needed there for your org
 5. Save and activate both flows again after updates.
 
+Then set up your Agentforce service agent:
+
+1. Create (or open) your Agentforce Service Agent in your org.
+2. In the agent **Role** area, add this instruction (as-is):
+   - `Always start with verifying the customer first using the Verification topic! Immediately invoke and execute the Send SMS Verification action first!!!`
+3. Go to **Subagents**:
+   - Click **New**
+   - Choose **Add from Asset Library**
+   - Add the `Customer Verification` subagent
+4. Activate and test the agent with your call flow or MIAW channels.
+5. For MIAW channels, make sure to:
+   - Add a pre-chat form to collect the user's phone number
+   - In the inbound MIAW omni-flow, map the pre-chat phone number value to `MessagingSession.Input_Phone__c`
+
+`Input_Phone__c` is the field used by the SMS verification flow to determine where the verification SMS will be sent.
+
 ## Included metadata
 
 - `metadata/flows/Send_SMS_Verification.flow`
