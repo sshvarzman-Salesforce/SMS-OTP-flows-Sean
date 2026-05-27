@@ -1,4 +1,4 @@
-# IMPORTANT Please READ THIS DOC until "Included Metadata section:
+# IMPORTANT Please READ THIS DOC until "Included Metadata" section:
 # SMS Verification + Customer Verification Agentforce Package
 
 ## What this package gives you
