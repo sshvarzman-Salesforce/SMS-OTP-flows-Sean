@@ -7,7 +7,7 @@ This package is easiest to deploy correctly with an AI coding assistant such as 
 When using an AI tool, give it:
 - this repository URL (Copy this URL)
 - your Salesforce org alias
-- this instruction: _"Deploy this package and handle dependencies listed in README."_
+- this instruction: _"Deploy this package, activate the deployed messaging component, activate both flows, and handle dependencies listed in README."_
 
 Why: this package includes org-dependent metadata (messaging channel + IDs + template dependencies), and an AI assistant can quickly adjust those values in your target org.
 
@@ -72,6 +72,20 @@ sf project deploy start \
   --source-dir metadata/flows/Verify_SMS_Code_MFA.flow \
   --target-org <TARGET_ORG_ALIAS>
 ```
+
+## Mandatory post-deploy activation (important)
+
+After deployment, instruct the AI tool to **activate all runtime assets**:
+
+1. Activate messaging component:
+   - Activate `OTP_SMS` conversation message definition in Setup.
+2. Activate both flows:
+   - `Send_SMS_Verification`
+   - `Verify_SMS_Code_MFA`
+
+Suggested AI instruction:
+
+_“After deploy, activate `OTP_SMS` conversation message definition and activate `Send_SMS_Verification` + `Verify_SMS_Code_MFA` flows. Confirm all three are Active.”_
 
 ## Prerequisites and dependencies (important)
 
