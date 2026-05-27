@@ -1,3 +1,4 @@
+IMPORTANT Please READ THIS DOC until "Included Metadata section:
 # SMS Verification + Customer Verification Agentforce Package
 
 ## What this package gives you
@@ -82,6 +83,10 @@ Then set up your Agentforce service agent:
    - Remeber to copy your messaging Channel ID and and add it to to 'Send SMS Verification' flow as mentioned above in steps 1-3!
 
 `Input_Phone__c` is the field used by the SMS verification flow to determine where the verification SMS will be sent.
+
+
+
+
 
 ## Included metadata
 
