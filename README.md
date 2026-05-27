@@ -1,165 +1,91 @@
-# SMS Verification OTP flows
+# SMS Verification + Customer Verification Agentforce Package
 
-## Use AI-assisted deployment (recommended)
+## What this package gives you
 
-This package is easiest to deploy correctly with an AI coding assistant such as **Cursor** or **Claude Code**.
+Deploying this repository gives you a reusable **Customer Verification** setup for Agentforce:
 
-When using an AI tool, give it:
-- this repository URL (Copy this URL)
-- your Salesforce org alias
-- this instruction: _"Deploy this package, activate the deployed messaging component, activate both flows, and handle dependencies listed in README."_
-
-Why: this package includes org-dependent metadata (messaging channel + IDs + template dependencies), and an AI assistant can quickly adjust those values in your target org.
-
-## Repository summary
-
-This repository packages reusable Salesforce metadata for an end-to-end SMS OTP verification process:
-
-1. `Send_SMS_Verification` generates and sends a one-time SMS verification code.
-2. `Verify_SMS_Code_MFA` validates the code entered by the user.
-
-The implementation is designed so OTP generation and verification are handled in flow logic without exposing raw verification details to agents.
+- Agentforce subagent/topic: **Customer Verification** (inside `Agentforce_Service_Agent`)
+- Agent actions inside that subagent:
+  - `Send SMS Verification`
+  - `Verify SMS Code MFA`
+- Flows used by those actions:
+  - `Send_SMS_Verification`
+  - `Verify_SMS_Code_MFA`
+- Required dependencies:
+  - `MessagingSession.Input_Phone__c` custom field
+  - `OTP_SMS` conversation message definition
+  - `TEXT_US_12012775572` messaging channel metadata
 
 Source org: `MainSDOSean`
+
+## Use Cursor or Claude Code (recommended)
+
+The fastest way to deploy this correctly is with an AI coding agent (Cursor or Claude Code) that has access to your authorized Salesforce org.
+
+Give the AI:
+- this GitHub URL
+- your target org alias
+- the instruction below
+
+Use this exact prompt:
+
+_“Deploy this GitHub package to my target Salesforce org alias `<TARGET_ORG_ALIAS>`. Deploy dependencies first, then flows, then Agentforce planner bundle. Activate `OTP_SMS` conversation message definition, activate flows `Send_SMS_Verification` and `Verify_SMS_Code_MFA`, and verify the `Customer Verification` subagent in `Agentforce_Service_Agent` has both actions: `Send SMS Verification` and `Verify SMS Code MFA`.”_
 
 ## Included metadata
 
 - `metadata/flows/Send_SMS_Verification.flow`
 - `metadata/flows/Verify_SMS_Code_MFA.flow`
-- `metadata/objects/MessagingSession.object`  
-  (contains only `Input_Phone__c` field metadata, not full object deployment)
+- `metadata/objects/MessagingSession.object` (scoped to `Input_Phone__c`)
 - `metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition`
 - `metadata/messagingChannels/TEXT_US_12012775572.messagingChannel`
 - `metadata/genAiPlannerBundles/Agentforce_Service_Agent/*`
-  - includes Agentforce local actions:
-    - `Send_SMS_Verification_179Hn000000VXvs`
-    - `Verify_SMS_Code_MFA_179Hn000000VXvs`
 - `package.xml`
 
-## Deploy to another org
+## Deployment steps (manual or AI-guided)
+
+### Step 1: Deploy dependencies
 
 ```bash
-sf project deploy start --metadata-dir . --target-org <TARGET_ORG_ALIAS>
-```
-
-## Recommended deployment order (for AI tools)
-
-Use this order when guiding Cursor/Claude Code or any deployment automation:
-
-1. Deploy base dependencies first:
-   - `MessagingSession.Input_Phone__c` (from `metadata/objects/MessagingSession.object`)
-   - `OTP_SMS` conversation message definition
-   - `TEXT_US_12012775572` messaging channel
-2. Deploy flows second:
-   - `Send_SMS_Verification`
-   - `Verify_SMS_Code_MFA`
-3. Deploy Agentforce planner bundle third:
-   - `Agentforce_Service_Agent` (contains the two Agent actions mapped to these flows)
-
-Why this order matters:
-- `Send_SMS_Verification` references both:
-  - `MessagingSession.Input_Phone__c`
-  - `messageDefinitionName = OTP_SMS`
-- Deploying dependencies first avoids reference failures in stricter CI/deployment pipelines.
-
-Example (explicit two-step deployment):
-
-```bash
-# Step 1: dependencies
 sf project deploy start \
   --source-dir metadata/objects/MessagingSession.object \
   --source-dir metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition \
   --source-dir metadata/messagingChannels/TEXT_US_12012775572.messagingChannel \
   --target-org <TARGET_ORG_ALIAS>
+```
 
-# Step 2: flows
+### Step 2: Deploy flows
+
+```bash
 sf project deploy start \
   --source-dir metadata/flows/Send_SMS_Verification.flow \
   --source-dir metadata/flows/Verify_SMS_Code_MFA.flow \
   --target-org <TARGET_ORG_ALIAS>
+```
 
-# Step 3: Agentforce actions/planner bundle
+### Step 3: Deploy Agentforce subagent/actions
+
+```bash
 sf project deploy start \
   --source-dir metadata/genAiPlannerBundles/Agentforce_Service_Agent \
   --target-org <TARGET_ORG_ALIAS>
 ```
 
-## Mandatory post-deploy activation (important)
-
-After deployment, instruct the AI tool to **activate all runtime assets**:
+## Post-deploy activation and checks (required)
 
 1. Activate messaging component:
-   - Activate `OTP_SMS` conversation message definition in Setup.
+   - `OTP_SMS` conversation message definition
 2. Activate both flows:
    - `Send_SMS_Verification`
    - `Verify_SMS_Code_MFA`
-3. Activate Agentforce planner bundle:
-   - `Agentforce_Service_Agent`
-   - verify these local actions are present in agent assets:
+3. In Agent Builder, confirm:
+   - planner bundle/agent: `Agentforce_Service_Agent`
+   - subagent/topic: `Customer Verification`
+   - actions present:
      - `Send SMS Verification`
      - `Verify SMS Code MFA`
 
-Suggested AI instruction:
+## Important notes
 
-_“After deploy, activate `OTP_SMS` conversation message definition and activate `Send_SMS_Verification` + `Verify_SMS_Code_MFA` flows. Confirm all three are Active.”_
-
-## Prerequisites and dependencies (important)
-
-Review these before deploying to another org:
-
-- **Dependencies included in this package**
-  - `MessagingSession.Input_Phone__c` custom field metadata
-  - Conversation Message Definition `OTP_SMS`
-  - Messaging Channel metadata: `TEXT_US_12012775572`
-
-- **Messaging channel dependency (new)**
-  - `Send_SMS_Verification` creates `MessagingEndUser` with hardcoded:
-    - `MessagingChannelId = 0MjHn000000PFypKAG`
-  - This repository now includes the source Messaging Channel metadata:
-    - `metadata/messagingChannels/TEXT_US_12012775572.messagingChannel`
-  - In a target org, update `MessagingChannelId` in `Send_SMS_Verification` to the deployed/target channel Id.
-  - The channel metadata also references:
-    - `sessionHandlerFlow = Demo_Messaging_Omni_Channel_inbound_flow`
-    - `sessionHandlerQueue = Demo_Messaging`
-    - `messageDefinitionName = SDO_Messaging_ConversationAcknowledgement` (auto-response)
-  - If these assets don't exist in target org, either create them or adjust the messaging channel configuration after deploy.
-
-- **Custom field dependency**
-  - `Send_SMS_Verification` reads `MessagingSession.Input_Phone__c`.
-  - Only this field is deployed (not the full `MessagingSession` object model).
-
-- **Messaging template/definition dependency**
-  - `Send_SMS_Verification` calls `sendConversationMessages` with:
-    - `messageDefinitionName = OTP_SMS`
-
-- **Invocable action availability**
-  - Flows call platform actions:
-    - `generateVerificationCode`
-    - `sendConversationMessages`
-    - `verifyCustomerCode`
-  - These require related Salesforce features/licenses in target org.
-
-- **Agentforce action dependency**
-  - This repo includes `GenAiPlannerBundle:Agentforce_Service_Agent` so the two Agentforce local actions are deployable as agent assets.
-  - The local actions invoke these flows:
-    - `Send_SMS_Verification`
-    - `Verify_SMS_Code_MFA`
-  - If your target org has a differently named planner bundle/agent, align the bundle name or migrate the local actions in Agent Builder after deploy.
-
-- **Object/feature assumptions**
-  - `Send_SMS_Verification` expects launch from `VoiceCall` or `MessagingSession`.
-  - It reads:
-    - `VoiceCall.FromPhoneNumber`
-    - `MessagingSession.Input_Phone__c`
-
-- **Template override dependency**
-  - `Verify_SMS_Code_MFA` includes:
-    - `overriddenFlow = SvcCopilotTmpl__VerifyCode`
-  - If this flow template is unavailable in target org, update/remove override.
-
-## Source org details
-
-- Org alias: `MainSDOSean`
-- Flow names:
-  - `Send_SMS_Verification`
-  - `Verify_SMS_Code_MFA`
+- `Send_SMS_Verification` has a hardcoded `MessagingChannelId` value from source org. After deploy, update it to your target org's channel ID if different.
+- Messaging channel metadata references additional assets (for example session handler flow/queue); align these in target org if needed.
+- `Verify_SMS_Code_MFA` includes `overriddenFlow = SvcCopilotTmpl__VerifyCode`; update/remove if that template doesn't exist in the target org.
