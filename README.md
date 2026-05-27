@@ -53,6 +53,11 @@ Also configure your org-specific channel ID:
 1. In Salesforce Setup, go to:
    - **Messaging Settings** -> **Messaging Channels**
 2. Open your channel and copy the channel Id from the browser URL.
+   - Example URL:
+     - `https://storm-589d4b9f356922.my.salesforce-setup.com/lightning/setup/LiveMessageSetup/0MjHn000000PFypKAG/view?lightning__channelType=`
+   - In this example, the channel Id is:
+     - `0MjHn000000PFypKAG`
+   - For non-technical users: copy the text between `LiveMessageSetup/` and `/view`.
 3. Open flow `Send_SMS_Verification`:
    - Go to element `Create_Messaging_User`
    - Update `MessagingChannelId` with your org's channel Id
