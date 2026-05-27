@@ -5,7 +5,7 @@
 This package is easiest to deploy correctly with an AI coding assistant such as **Cursor** or **Claude Code**.
 
 When using an AI tool, give it:
-- this repository URL
+- this repository URL (Copy this URL)
 - your Salesforce org alias
 - this instruction: _"Deploy this package and handle dependencies listed in README."_
 
