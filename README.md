@@ -75,10 +75,11 @@ Then set up your Agentforce service agent:
    - Click **New**
    - Choose **Add from Asset Library**
    - Add the `Customer Verification` subagent
-4. Activate and test the agent with your call flow or MIAW channels.
+4. Activate and test the agent with voice or MIAW channels.
 5. For MIAW channels, make sure to:
    - Add a pre-chat form to collect the user's phone number
    - In the inbound MIAW omni-flow, map the pre-chat phone number value to `MessagingSession.Input_Phone__c`
+   - Remeber to copy your messaging Channel ID and and add it to to 'Send SMS Verification' flow as mentioned above in steps 1-3!
 
 `Input_Phone__c` is the field used by the SMS verification flow to determine where the verification SMS will be sent.
 
