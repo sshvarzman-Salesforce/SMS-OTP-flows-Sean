@@ -57,10 +57,11 @@ Also configure your org-specific channel ID:
      - `https://storm-589d4b9f356922.my.salesforce-setup.com/lightning/setup/LiveMessageSetup/0MjHn000000PFypKAG/view?lightning__channelType=`
    - In this example, the channel Id is:
      - `0MjHn000000PFypKAG`
-   - For non-technical users: copy the text between `LiveMessageSetup/` and `/view`.
+   - Basically, copy the text between `LiveMessageSetup/` and `/view`.
 3. Open flow `Send_SMS_Verification`:
    - Go to element `Create_Messaging_User`
-   - Update `MessagingChannelId` with your org's channel Id
+   - Update `MessagingChannelId` with your org's channel Id you just copied!
+   - Save the flow as a new version, then activate the flow
 4. Review flow `Verify_SMS_Code_MFA`:
    - confirm no channel Id override is needed there for your org
 5. Save and activate both flows again after updates.
