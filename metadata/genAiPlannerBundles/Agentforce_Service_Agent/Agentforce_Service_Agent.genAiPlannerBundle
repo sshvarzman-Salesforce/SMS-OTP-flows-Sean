@@ -7,7 +7,7 @@
         <mappingType>Variable</mappingType>
     </attributeMappings>
     <attributeMappings>
-        <attributeName>ServiceCustomerVerification_16jHn00000005qM.Send_SMS_Verification_179Hn000000VXvs.output_AuthonticationKey</attributeName>
+        <attributeName>ServiceCustomerVerification_16jHn00000005qM.Send_SMS_Verification_179Hn000000VXvs.output_AuthenticationKey</attributeName>
         <attributeType>CustomPluginFunctionAttribute</attributeType>
         <mappingTargetName>authenticationKey</mappingTargetName>
         <mappingType>Variable</mappingType>
@@ -197,9 +197,9 @@
                 <parameterType>input</parameterType>
             </mappingAttributes>
             <mappingAttributes>
-                <label>AuthonticationKey</label>
-                <name>output_AuthonticationKey</name>
-                <parameterName>AuthonticationKey</parameterName>
+                <label>AuthenticationKey</label>
+                <name>output_AuthenticationKey</name>
+                <parameterName>AuthenticationKey</parameterName>
                 <parameterType>output</parameterType>
             </mappingAttributes>
             <masterLabel>Send SMS Verification</masterLabel>
