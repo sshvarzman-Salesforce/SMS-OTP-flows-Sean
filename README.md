@@ -85,6 +85,12 @@ sf project deploy start \
 
 ### Step 4 — Deploy the agent
 
+> ⚠️ **Important:** Salesforce will reject this deployment if `Agentforce_Service_Agent` is currently **Active** in your org. Before running this command:
+> 1. Go to **Agentforce Studio** → open **Agentforce Service Agent**.
+> 2. Click **Deactivate** (top-right corner).
+> 3. Run the deploy command below.
+> 4. After the deploy succeeds, return to Agentforce Studio and click **Activate** to turn the agent back on.
+
 ```bash
 sf project deploy start \
   --source-dir metadata/genAiPlannerBundles/Agentforce_Service_Agent \
@@ -170,6 +176,7 @@ For voice/phone channels, the phone number is read automatically from the call r
 | `No consent record found` | Messaging consent not set up | Consent enforcement is disabled by this package — if you still see this error, check your org's messaging consent configuration |
 | Flow deploys but SMS is never sent | Flows not activated, OR channel ID still a placeholder | Activate both flows (Step 2) and check the Custom Label value (Step 3) |
 | Agent does not run verification first | Context variable not mapped | Complete Step 4 of post-deployment setup |
+| `Cannot update record as Agent is Active` | `Agentforce_Service_Agent` was Active when you ran Step 4 | Deactivate the agent in Agentforce Studio, re-run the Step 4 deploy command, then reactivate the agent afterward |
 | Deployment fails with `Atlas__VoiceAgent` error | Voice/telephony not licensed in this org | Remove the `voiceDefinition` block and the `Telephony` surface block from `Agentforce_Service_Agent.genAiPlannerBundle` before deploying |
 
 ---
