@@ -18,7 +18,7 @@
         <mappingTargetName>authenticationKey</mappingTargetName>
         <mappingType>Variable</mappingType>
     </attributeMappings>
-    <description>Apex Trust Bank&apos;s AI-powered customer service agent designed to handle inbound customer interactions across digital and voice channels. The agent is responsible for verifying customer identity via SMS code before granting access to authenticated topics, answering frequently asked questions using approved knowledge articles, and escalating conversations to a live human agent when needed. Built to demonstrate Agentforce&apos;s multi-topic orchestration, secure verification gating, and seamless human handoff capabilities in a financial services context.</description>
+    <description>AI-powered customer service agent for digital channels. Verifies customer identity via SMS OTP before granting access to authenticated topics, answers questions from knowledge articles, and escalates conversations to a live human agent when needed.</description>
     <localActionLinks>
         <genAiFunctionName>AnswerQuestionsWithKnowledge_16jHn00000005qM</genAiFunctionName>
     </localActionLinks>
