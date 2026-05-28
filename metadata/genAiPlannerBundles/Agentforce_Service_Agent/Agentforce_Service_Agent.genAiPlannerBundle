@@ -60,7 +60,7 @@
     <localTopics>
         <fullName>GeneralFAQ_16jHn00000005qM</fullName>
         <canEscalate>false</canEscalate>
-        <description>Use this topic when a customer asks a question about Apex Trust Bank, its products, services, policies, or business procedures. This includes questions about accounts, cards, loans, transfers, fees, and general banking processes. The agent searches knowledge articles to find the most relevant and accurate answer.</description>
+        <description>Use this topic when a customer asks a question about the company, its products, services, policies, or business procedures. The agent searches knowledge articles to find the most relevant and accurate answer.</description>
         <developerName>GeneralFAQ_16jHn00000005qM</developerName>
         <genAiPluginInstructions>
             <description>When a customer asks a question, always search the knowledge articles first before responding. Never answer from general knowledge — only provide information that has been retrieved from Apex Trust Bank&apos;s knowledge articles.</description>
@@ -77,7 +77,7 @@
             <sortOrder>1</sortOrder>
         </genAiPluginInstructions>
         <genAiPluginInstructions>
-            <description>Answer in a natural, conversational, and friendly tone as if you are a knowledgeable Apex Trust Bank representative. Do not mention that you are reading from a knowledge article or reference the article by name unless a source is available to share.</description>
+            <description>Answer in a natural, conversational, and friendly tone as if you are a knowledgeable company representative. Do not mention that you are reading from a knowledge article or reference the article by name unless a source is available to share.</description>
             <developerName>requestmoredetails</developerName>
             <language xsi:nil="true"/>
             <masterLabel>request-more-details</masterLabel>
@@ -124,7 +124,7 @@
         <localDeveloperName>GeneralFAQ</localDeveloperName>
         <masterLabel>General FAQ</masterLabel>
         <pluginType>Topic</pluginType>
-        <scope>This topic is solely responsible for answering customer questions about Apex Trust Bank, its products, procedures, and policies by searching through available knowledge articles. The agent does not speculate, generalize, or provide information that has not been retrieved from a knowledge article. If a relevant answer cannot be found, the agent offers to escalate to a live agent.</scope>
+        <scope>This topic is solely responsible for answering customer questions about the company, its products, procedures, and policies by searching through available knowledge articles. The agent does not speculate, generalize, or provide information that has not been retrieved from a knowledge article. If a relevant answer cannot be found, the agent offers to escalate to a live agent.</scope>
         <source>SvcCopilotTmpl__GeneralFAQ</source>
     </localTopics>
     <localTopics>
