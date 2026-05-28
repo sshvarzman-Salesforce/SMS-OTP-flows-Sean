@@ -60,12 +60,6 @@
             </value>
         </inputParameters>
         <inputParameters>
-            <name>channelConsentType</name>
-            <value>
-                <stringValue>MessagingEndUser</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
             <name>allowedSessionStatus</name>
             <value>
                 <stringValue>Any</stringValue>
