@@ -1,26 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ConversationMessageDefinition xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <constants>
-        <constantType>Image</constantType>
-        <primitiveValues>
-            <contentAssetName>Gemini_Generated_Image_rvo075rvo075</contentAssetName>
-            <type>ImageAsset</type>
-        </primitiveValues>
-    </constants>
-    <constants>
-        <constantType>Title</constantType>
-        <primitiveValues>
-            <textValue>Your Link Title Here</textValue>
-            <type>Text</type>
-        </primitiveValues>
-    </constants>
-    <constants>
-        <constantType>Url</constantType>
-        <primitiveValues>
-            <type>Url</type>
-            <urlValue>https://www.example.com</urlValue>
-        </primitiveValues>
-    </constants>
     <label>OTP SMS</label>
     <language>en_US</language>
     <messageLayouts>
