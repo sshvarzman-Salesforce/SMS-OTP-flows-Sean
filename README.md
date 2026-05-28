@@ -15,9 +15,19 @@ Deploying this repository gives you a reusable **Customer Verification** setup f
 - Required dependencies:
   - `MessagingSession.Input_Phone__c` custom field
   - `OTP_SMS` conversation message definition
+  - `SMS_Messaging_Channel_Id` Custom Label (deployed from this package; must be updated post-deploy with your org's Messaging Channel ID)
   - A Messaging channel in the target org (create this in your org; not deployed from this package)
 
 Source org: `MainSDOSean`
+
+## Prerequisites
+
+The following managed packages must be pre-installed in the target org before deploying:
+
+- **Service Copilot Template** (`SvcCopilotTmpl__`): Required for `Verify_SMS_Code_MFA` (overrides `SvcCopilotTmpl__VerifyCode`) and the verification topic templates.
+- **Employee Copilot** (`EmployeeCopilot__`): Required for the `AnswerQuestionsWithKnowledge` action in the General FAQ topic.
+
+Deployment will fail if these packages are not already installed.
 
 ## Use Cursor or Claude Code (recommended)
 
@@ -30,7 +40,7 @@ Give the AI:
 
 Use this exact prompt:
 
-_“Deploy this GitHub package to my target Salesforce org alias `<TARGET_ORG_ALIAS>`. Deploy dependencies first, then flows, then Agentforce planner bundle. Activate `OTP_SMS` conversation message definition, activate flows `Send_SMS_Verification` and `Verify_SMS_Code_MFA`, and verify the `Customer Verification` subagent in `Agentforce_Service_Agent` has both actions: `Send SMS Verification` and `Verify SMS Code MFA`.”_
+_"Deploy this GitHub package to my target Salesforce org alias `<TARGET_ORG_ALIAS>`. Deploy dependencies first (including the Custom Labels file), then flows, then Agentforce planner bundle. Activate `OTP_SMS` conversation message definition, activate flows `Send_SMS_Verification` and `Verify_SMS_Code_MFA`, update the `SMS_Messaging_Channel_Id` Custom Label with the org's Messaging Channel ID, and verify the `Customer Verification` subagent in `Agentforce_Service_Agent` has both actions: `Send SMS Verification` and `Verify SMS Code MFA`."_
 
 After deployment succeeds and after adding the `Customer Verification` subagent to your Agentforce service agent, do this mapping:
 
@@ -41,7 +51,7 @@ After deployment succeeds and after adding the `Customer Verification` subagent 
      - `Allow value to be set by API`
      - `Allow LLM to use value`
 2. Open action `Send SMS Verification`:
-   - Find output `AuthonticationKey`
+   - Find output `AuthenticationKey`
    - In **Map to variable**, select `authentication key`
 3. Open action `Verify SMS Code MFA`:
    - Find input `authenticationKey`
@@ -59,13 +69,10 @@ Also configure your org-specific channel ID:
    - In this example, the channel Id is:
      - `0MjHn000000PFypKAG`
    - Basically, copy the text between `LiveMessageSetup/` and `/view`.
-3. Open flow `Send_SMS_Verification`:
-   - Go to element `Create_Messaging_User`
-   - Update `MessagingChannelId` with your org's channel Id you just copied!
-   - Save the flow as a new version, then activate the flow
-4. Review flow `Verify_SMS_Code_MFA`:
-   - confirm no channel Id override is needed there for your org
-5. Save and activate both flows again after updates.
+3. In Salesforce Setup, go to **Custom Labels** and open `SMS_Messaging_Channel_Id`.
+   - Replace the placeholder value `REPLACE_WITH_YOUR_MESSAGING_CHANNEL_ID` with your actual channel Id.
+   - Save the Custom Label.
+4. No flow edits are needed — `Send_SMS_Verification` reads the channel Id from this label automatically.
 
 Then set up your Agentforce service agent:
 
@@ -80,10 +87,9 @@ Then set up your Agentforce service agent:
 5. For MIAW channels, make sure to:
    - Add a pre-chat form to collect the user's phone number
    - In the inbound MIAW omni-flow, map the pre-chat phone number value to `MessagingSession.Input_Phone__c`
-   - Remeber to copy your messaging Channel ID and and add it to to 'Send SMS Verification' flow as mentioned above in steps 1-3!
+   - Make sure `SMS_Messaging_Channel_Id` Custom Label has been updated with your Messaging Channel ID (see steps above).
 
 `Input_Phone__c` is the field used by the SMS verification flow to determine where the verification SMS will be sent.
-
 
 
 
@@ -94,6 +100,7 @@ Then set up your Agentforce service agent:
 - `metadata/flows/Verify_SMS_Code_MFA.flow`
 - `metadata/objects/MessagingSession.object` (scoped to `Input_Phone__c`)
 - `metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition`
+- `metadata/labels/CustomLabels.labels` (`SMS_Messaging_Channel_Id` — update value post-deploy)
 - `metadata/genAiPlannerBundles/Agentforce_Service_Agent/*`
 - `package.xml`
 
@@ -105,6 +112,7 @@ Then set up your Agentforce service agent:
 sf project deploy start \
   --source-dir metadata/objects/MessagingSession.object \
   --source-dir metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition \
+  --source-dir metadata/labels/CustomLabels.labels \
   --target-org <TARGET_ORG_ALIAS>
 ```
 
@@ -138,14 +146,14 @@ sf project deploy start \
    - actions present:
      - `Send SMS Verification`
      - `Verify SMS Code MFA`
-4. Update channel IDs in flow and reactivate:
-   - In `Send_SMS_Verification`, find `Create_Messaging_User` and update `MessagingChannelId` to your org's channel ID.
-   - If your voice/messaging setup uses different channel references, align them in the flow.
-   - Save and reactivate `Send_SMS_Verification` (and reactivate `Verify_SMS_Code_MFA` if your org requires reactivation after dependency updates).
+4. Update the channel ID Custom Label:
+   - In Setup, go to **Custom Labels** and open `SMS_Messaging_Channel_Id`.
+   - Replace `REPLACE_WITH_YOUR_MESSAGING_CHANNEL_ID` with your org's actual Messaging Channel ID.
+   - No flow edits or reactivation needed — the flow reads this label at runtime.
 
 ## Important notes
 
 - This package intentionally does **not** deploy Messaging Channel metadata across orgs.
-- `Send_SMS_Verification` has a hardcoded `MessagingChannelId` value from source org. After deploy, create your own messaging channel in target org, update the flow to your channel ID, and reactivate the flow.
+- `Send_SMS_Verification` reads `MessagingChannelId` from the Custom Label `SMS_Messaging_Channel_Id` (deployed with this package). After deployment, update the label value in **Setup > Custom Labels** with your org's actual Messaging Channel ID.
 - If your implementation also relies on org-specific voice channel/route configuration, update those channel references in your target org setup and flow configuration.
-- `Verify_SMS_Code_MFA` includes `overriddenFlow = SvcCopilotTmpl__VerifyCode`; update/remove if that template doesn't exist in the target org.
+- `Verify_SMS_Code_MFA` includes `overriddenFlow = SvcCopilotTmpl__VerifyCode`; ensure the `SvcCopilotTmpl__` managed package is installed in the target org before deploying (see Prerequisites above).
