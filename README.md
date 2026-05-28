@@ -1,159 +1,200 @@
-# !IMPORTANT! Please READ THIS DOC until "Included Metadata" section:
-# SMS Verification + Customer Verification Agentforce Package
+# SMS OTP Verification for Agentforce Service Agent
 
-## What this package gives you
+Deploys a ready-to-use Agentforce Service Agent that verifies a customer's identity via SMS one-time passcode (OTP) before they can access any other topics. The agent also answers questions from your Knowledge base and can escalate to a live agent.
 
-Deploying this repository gives you a reusable **Customer Verification** setup for Agentforce:
+---
 
-- Agentforce subagent/topic: **Customer Verification** (inside `Agentforce_Service_Agent`)
-- Agent actions inside that subagent:
-  - `Send SMS Verification`
-  - `Verify SMS Code MFA`
-- Flows used by those actions:
-  - `Send_SMS_Verification`
-  - `Verify_SMS_Code_MFA`
-- Required dependencies:
-  - `MessagingSession.Input_Phone__c` custom field
-  - `OTP_SMS` conversation message definition
-  - `SMS_Messaging_Channel_Id` Custom Label (deployed from this package; must be updated post-deploy with your org's Messaging Channel ID)
-  - A Messaging channel in the target org (create this in your org; not deployed from this package)
+## What you get after deployment
 
-Source org: `MainSDOSean`
+A fully configured **Agentforce Service Agent** (`Agentforce_Service_Agent`) with three topics already wired up:
 
-## Prerequisites
+| Topic | What it does |
+|---|---|
+| **Customer Verification** | Runs first on every conversation. Sends a 6-digit OTP via SMS, asks the customer to read it back, and verifies it. Gives one retry on a wrong code, then escalates to a human if verification fails twice. |
+| **General FAQ** | Searches your Salesforce Knowledge articles to answer customer questions. |
+| **Escalation** | Transfers the conversation to a live human agent on request. |
 
-The following managed packages must be pre-installed in the target org before deploying:
+---
 
-- **Service Copilot Template** (`SvcCopilotTmpl__`): Required for `Verify_SMS_Code_MFA` (overrides `SvcCopilotTmpl__VerifyCode`) and the verification topic templates.
-- **Employee Copilot** (`EmployeeCopilot__`): Required for the `AnswerQuestionsWithKnowledge` action in the General FAQ topic.
+## Before you start — complete checklist
 
-Deployment will fail if these packages are not already installed.
+Work through each item before deploying. Skipping any of these is the most common cause of deployment failures.
 
-## Use Cursor or Claude Code (recommended)
+### Your Salesforce org must have these features enabled
 
-The fastest way to deploy this correctly is with an AI coding agent (Cursor or Claude Code) that has access to your authorized Salesforce org.
+- [ ] **Agentforce** — The AI agent platform. Check in Setup → Agentforce Studio.
+- [ ] **Digital Engagement / Messaging** — Required for the SMS channel. Check in Setup → Messaging Settings.
+- [ ] **SMS messaging channel already created** — The channel must exist in your org *before* you deploy. See "How to create an SMS channel" below.
+- [ ] **Salesforce Knowledge** — Required for the General FAQ topic. Check in Setup → Knowledge Settings.
+- [ ] **Service Cloud Voice** *(required only for telephony/phone channel)* — If you only plan to use web chat (MIAW) or messaging, you can skip this. If you want phone/voice support, this license must be enabled.
 
-Give the AI:
-- this GitHub URL
-- your target org alias
-- the instruction below
+### These Salesforce packages must already be installed
 
-Use this exact prompt:
+This package depends on two Salesforce managed packages. Deployment will fail if either is missing.
 
-_"Deploy this GitHub package to my target Salesforce org alias `<TARGET_ORG_ALIAS>`. Deploy dependencies first (including the Custom Labels file), then flows, then Agentforce planner bundle. Activate `OTP_SMS` conversation message definition, activate flows `Send_SMS_Verification` and `Verify_SMS_Code_MFA`, update the `SMS_Messaging_Channel_Id` Custom Label with the org's Messaging Channel ID, and verify the `Customer Verification` subagent in `Agentforce_Service_Agent` has both actions: `Send SMS Verification` and `Verify SMS Code MFA`."_
+- [ ] **Service Copilot Template** (namespace: `SvcCopilotTmpl__`) — Provides the base templates for the Verification, FAQ, and Escalation topics, and the `VerifyCode` flow that the `Verify_SMS_Code_MFA` flow overrides.
+- [ ] **Employee Copilot** (namespace: `EmployeeCopilot__`) — Provides the `AnswerQuestionsWithKnowledge` action used by the FAQ topic.
 
-After deployment succeeds and after adding the `Customer Verification` subagent to your Agentforce service agent, do this mapping:
+To check if these are installed: Setup → Installed Packages. If they are missing, contact your Salesforce AE or admin — they are part of the Agentforce for Service licensing bundle.
 
-1. Create a context variable:
-   - Variable name: `authentication key`
-   - Type: `Text`
-   - Leave unchecked:
-     - `Allow value to be set by API`
-     - `Allow LLM to use value`
-2. Open action `Send SMS Verification`:
-   - Find output `AuthenticationKey`
-   - In **Map to variable**, select `authentication key`
-3. Open action `Verify SMS Code MFA`:
-   - Find input `authenticationKey`
-   - In **Assign to variable**, select `authentication key`
+### On your computer
 
-This keeps the authentication key generated by the first action and passes it correctly into the second action.
+- [ ] **Salesforce CLI** installed — Download from [developer.salesforce.com/tools/salesforcecli](https://developer.salesforce.com/tools/salesforcecli)
+- [ ] **Authenticated to your target org** — Run `sf org login web --alias myOrg` and complete the browser login, then verify with `sf org display --target-org myOrg`.
 
-Also configure your org-specific channel ID:
+---
 
-1. In Salesforce Setup, go to:
-   - **Messaging Settings** -> **Messaging Channels**
-2. Open your channel and copy the channel Id from the browser URL.
-   - Example URL:
-     - `https://storm-589d4b9f356922.my.salesforce-setup.com/lightning/setup/LiveMessageSetup/0MjHn000000PFypKAG/view?lightning__channelType=`
-   - In this example, the channel Id is:
-     - `0MjHn000000PFypKAG`
-   - Basically, copy the text between `LiveMessageSetup/` and `/view`.
-3. In Salesforce Setup, go to **Custom Labels** and open `SMS_Messaging_Channel_Id`.
-   - Replace the placeholder value `REPLACE_WITH_YOUR_MESSAGING_CHANNEL_ID` with your actual channel Id.
-   - Save the Custom Label.
-4. No flow edits are needed — `Send_SMS_Verification` reads the channel Id from this label automatically.
+## How to create an SMS channel (if you haven't yet)
 
-Then set up your Agentforce service agent:
+1. In Salesforce Setup, search for **Messaging Settings**.
+2. Click **New Channel** → select **SMS** → follow the wizard.
+3. Once the channel is created, open it and copy the **Channel ID** from the browser URL. It looks like: `0MjHn000000PFypKAG` (the segment between `LiveMessageSetup/` and `/view`).
+4. Save that Channel ID — you will need it in Step 3 of the post-deployment setup below.
 
-1. Create (or open) your Agentforce Service Agent in your org.
-2. In the agent **Role** area, add this instruction (as-is):
-   - `Always start with verifying the customer first using the Verification topic! Immediately invoke and execute the Send SMS Verification action first!!!`
-3. Go to **Subagents**:
-   - Click **New**
-   - Choose **Add from Asset Library**
-   - Add the `Customer Verification` subagent
-4. Activate and test the agent with voice or MIAW channels.
-5. For MIAW channels, make sure to:
-   - Add a pre-chat form to collect the user's phone number
-   - In the inbound MIAW omni-flow, map the pre-chat phone number value to `MessagingSession.Input_Phone__c`
-   - Make sure `SMS_Messaging_Channel_Id` Custom Label has been updated with your Messaging Channel ID (see steps above).
+---
 
-`Input_Phone__c` is the field used by the SMS verification flow to determine where the verification SMS will be sent.
+## Deploy
 
+Run these three commands in order from your terminal. Replace `<YOUR_ORG_ALIAS>` with the alias you used when you logged in.
 
+### Step 1 — Clone this repository
 
+```bash
+git clone https://github.com/sshvarzman-Salesforce/SMS-OTP-flows-Sean.git
+cd SMS-OTP-flows-Sean
+```
 
-## Included metadata
-
-- `metadata/flows/Send_SMS_Verification.flow`
-- `metadata/flows/Verify_SMS_Code_MFA.flow`
-- `metadata/objects/MessagingSession.object` (scoped to `Input_Phone__c`)
-- `metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition`
-- `metadata/labels/CustomLabels.labels` (`SMS_Messaging_Channel_Id` — update value post-deploy)
-- `metadata/genAiPlannerBundles/Agentforce_Service_Agent/*`
-- `package.xml`
-
-## Deployment steps (manual or AI-guided)
-
-### Step 1: Deploy dependencies
+### Step 2 — Deploy dependencies
 
 ```bash
 sf project deploy start \
   --source-dir metadata/objects/MessagingSession.object \
   --source-dir metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition \
   --source-dir metadata/labels/CustomLabels.labels \
-  --target-org <TARGET_ORG_ALIAS>
+  --target-org <YOUR_ORG_ALIAS>
 ```
 
-### Step 2: Deploy flows
+### Step 3 — Deploy flows
 
 ```bash
 sf project deploy start \
   --source-dir metadata/flows/Send_SMS_Verification.flow \
   --source-dir metadata/flows/Verify_SMS_Code_MFA.flow \
-  --target-org <TARGET_ORG_ALIAS>
+  --target-org <YOUR_ORG_ALIAS>
 ```
 
-### Step 3: Deploy Agentforce subagent/actions
+### Step 4 — Deploy the agent
 
 ```bash
 sf project deploy start \
   --source-dir metadata/genAiPlannerBundles/Agentforce_Service_Agent \
-  --target-org <TARGET_ORG_ALIAS>
+  --target-org <YOUR_ORG_ALIAS>
 ```
 
-## Post-deploy activation and checks (required)
+If any step fails, check the **Troubleshooting** section at the bottom of this page.
 
-1. Activate messaging component:
-   - `OTP_SMS` conversation message definition
-2. Activate both flows:
-   - `Send_SMS_Verification`
-   - `Verify_SMS_Code_MFA`
-3. In Agent Builder, confirm:
-   - planner bundle/agent: `Agentforce_Service_Agent`
-   - subagent/topic: `Customer Verification`
-   - actions present:
-     - `Send SMS Verification`
-     - `Verify SMS Code MFA`
-4. Update the channel ID Custom Label:
-   - In Setup, go to **Custom Labels** and open `SMS_Messaging_Channel_Id`.
-   - Replace `REPLACE_WITH_YOUR_MESSAGING_CHANNEL_ID` with your org's actual Messaging Channel ID.
-   - No flow edits or reactivation needed — the flow reads this label at runtime.
+---
 
-## Important notes
+## After deployment — required setup steps
 
-- This package intentionally does **not** deploy Messaging Channel metadata across orgs.
-- `Send_SMS_Verification` reads `MessagingChannelId` from the Custom Label `SMS_Messaging_Channel_Id` (deployed with this package). After deployment, update the label value in **Setup > Custom Labels** with your org's actual Messaging Channel ID.
-- If your implementation also relies on org-specific voice channel/route configuration, update those channel references in your target org setup and flow configuration.
-- `Verify_SMS_Code_MFA` includes `overriddenFlow = SvcCopilotTmpl__VerifyCode`; ensure the `SvcCopilotTmpl__` managed package is installed in the target org before deploying (see Prerequisites above).
+These steps must be done in your Salesforce org after the deploy commands succeed. The agent will not work correctly without them.
+
+### Step 1 — Activate the SMS message template
+
+1. Go to Setup → **Messaging Settings** → **Message Definitions**.
+2. Find **OTP SMS** and click **Activate**.
+
+### Step 2 — Activate the flows
+
+1. Go to Setup → **Flows**.
+2. Find `Send_SMS_Verification` → open it → click **Activate**.
+3. Find `Verify_SMS_Code_MFA` → open it → click **Activate**.
+
+### Step 3 — Set your Messaging Channel ID
+
+The flow that sends the SMS needs to know which of your messaging channels to use.
+
+1. Go to Setup → **Custom Labels**.
+2. Find **SMS_Messaging_Channel_Id** and click **Edit**.
+3. Replace the value `REPLACE_WITH_YOUR_MESSAGING_CHANNEL_ID` with the Channel ID you copied when you created your SMS channel.
+4. Click **Save**.
+
+No flow editing is needed — the flow reads this label automatically.
+
+### Step 4 — Wire the authentication key in the agent
+
+The OTP code generated by the Send action must be passed to the Verify action. You do this by creating a context variable that holds it between the two steps.
+
+1. Go to **Agentforce Studio** → open **Agentforce Service Agent**.
+2. Click **Variables** (or **Context Variables**) → **New Variable**:
+   - Name: `authentication key`
+   - Type: `Text`
+   - Leave both checkboxes unchecked.
+3. Click the **Customer Verification** topic → open the **Send SMS Verification** action:
+   - Find the output `AuthenticationKey`
+   - Set **Map to variable** → `authentication key`
+4. Open the **Verify SMS Code MFA** action in the same topic:
+   - Find the input `authenticationKey`
+   - Set **Assign from variable** → `authentication key`
+5. Save and activate the agent.
+
+### Step 5 — (Web chat / MIAW only) Collect the customer's phone number
+
+If you are using an embedded web chat (Messaging for In-App and Web), the flow needs to know the customer's phone number. Do the following in your org:
+
+1. Add a **pre-chat form** to your messaging channel that asks for the customer's phone number.
+2. In your inbound **Omni-Channel Flow** for that channel, map the phone number value from the pre-chat form to the `MessagingSession.Input_Phone__c` field.
+
+For voice/phone channels, the phone number is read automatically from the call record — no extra setup needed.
+
+---
+
+## Verify it works
+
+1. Open a test conversation with your Agentforce Service Agent (via MIAW or phone).
+2. The very first thing the agent should do is say it is sending a verification code and run the Send SMS Verification action — **without you prompting it**. If it does not, check the topic instructions and make sure the Customer Verification topic is active and listed first.
+3. You should receive an SMS with a message like: *"Your verification code is 123456. This code will expire in 5 minutes."*
+4. Reply with the code. The agent should confirm your identity and ask how it can help.
+5. Try an incorrect code — the agent should give you one more attempt with a new code.
+6. On a second wrong code, the agent should escalate to a human agent.
+
+---
+
+## Troubleshooting
+
+| Error | Likely cause | Fix |
+|---|---|---|
+| `Cannot find object: SvcCopilotTmpl__VerifyCode` | Service Copilot Template package not installed | Install `SvcCopilotTmpl__` managed package first |
+| `Cannot find invocable action: streamKnowledgeSearch` | Knowledge not enabled | Enable Salesforce Knowledge in Setup |
+| `Invalid MessagingChannelId` | Custom Label not updated | Complete Step 3 of post-deployment setup |
+| `No consent record found` | Messaging consent not set up | Consent enforcement is disabled by this package — if you still see this error, check your org's messaging consent configuration |
+| Flow deploys but SMS is never sent | Flows not activated, OR channel ID still a placeholder | Activate both flows (Step 2) and check the Custom Label value (Step 3) |
+| Agent does not run verification first | Context variable not mapped | Complete Step 4 of post-deployment setup |
+| Deployment fails with `Atlas__VoiceAgent` error | Voice/telephony not licensed in this org | Remove the `voiceDefinition` block and the `Telephony` surface block from `Agentforce_Service_Agent.genAiPlannerBundle` before deploying |
+
+---
+
+## Voice / phone channel notes
+
+This agent is configured to work on voice/phone calls as well as messaging. Voice support requires **Service Cloud Voice** licensing. If your org does not have this license:
+
+- Remove the `<plannerSurfaces>` block with `<surfaceType>Telephony</surfaceType>` and the `<voiceDefinition>` block from `metadata/genAiPlannerBundles/Agentforce_Service_Agent/Agentforce_Service_Agent.genAiPlannerBundle` before deploying.
+- The agent will still work on web chat and messaging channels.
+
+If you do use voice, update the outbound route name `Outbound_route_VoiceCall_to_Queue` in the bundle to match your org's Omni-Channel queue flow.
+
+---
+
+## What is included in this package
+
+| File | Purpose |
+|---|---|
+| `metadata/flows/Send_SMS_Verification.flow` | Generates the OTP, looks up or creates the MessagingEndUser, and sends the SMS |
+| `metadata/flows/Verify_SMS_Code_MFA.flow` | Validates the code the customer provides |
+| `metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition` | The SMS message template ("Your verification code is…") |
+| `metadata/labels/CustomLabels.labels` | `SMS_Messaging_Channel_Id` — holds your org's Messaging Channel ID |
+| `metadata/objects/MessagingSession.object` | Adds `Input_Phone__c` field to MessagingSession (used for MIAW phone capture) |
+| `metadata/genAiPlannerBundles/Agentforce_Service_Agent/` | The complete Agentforce Service Agent with all topics, instructions, and actions |
+| `package.xml` | Deployment manifest |
+
+Source org: `MainSDOSean`
