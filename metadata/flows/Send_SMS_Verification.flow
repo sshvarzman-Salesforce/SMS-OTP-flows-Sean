@@ -18,7 +18,7 @@
             <name>verificationCode</name>
         </outputParameters>
         <outputParameters>
-            <assignToReference>AuthonticationKey</assignToReference>
+            <assignToReference>AuthenticationKey</assignToReference>
             <name>authenticationKey</name>
         </outputParameters>
     </actionCalls>
@@ -56,7 +56,7 @@
         <inputParameters>
             <name>isEnforceMessagingChannelConsent</name>
             <value>
-                <booleanValue>true</booleanValue>
+                <booleanValue>false</booleanValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -121,7 +121,7 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <assignmentItems>
-            <assignToReference>PhnoeNumber</assignToReference>
+            <assignToReference>PhoneNumber</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>Get_VoiceCall.FromPhoneNumber</elementReference>
@@ -153,7 +153,7 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <assignmentItems>
-            <assignToReference>PhnoeNumber</assignToReference>
+            <assignToReference>PhoneNumber</assignToReference>
             <operator>Assign</operator>
             <value>
                 <elementReference>Get_Messaging_Session.Input_Phone__c</elementReference>
@@ -253,13 +253,13 @@
         <inputAssignments>
             <field>MessagingChannelId</field>
             <value>
-                <stringValue>0MjHn000000PFypKAG</stringValue>
+                <elementReference>$Label.SMS_Messaging_Channel_Id</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <field>MessagingPlatformKey</field>
             <value>
-                <elementReference>PhnoeNumber</elementReference>
+                <elementReference>PhoneNumber</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -309,7 +309,7 @@
             <field>MessagingPlatformKey</field>
             <operator>Contains</operator>
             <value>
-                <elementReference>PhnoeNumber</elementReference>
+                <elementReference>PhoneNumber</elementReference>
             </value>
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
@@ -394,7 +394,7 @@
     </transforms>
     <variables>
         <description>The Authentication Key generated with the 6 digit verification code</description>
-        <name>AuthonticationKey</name>
+        <name>AuthenticationKey</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
@@ -424,7 +424,7 @@
         <objectType>MessagingEndUser</objectType>
     </variables>
     <variables>
-        <name>PhnoeNumber</name>
+        <name>PhoneNumber</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
