@@ -3,7 +3,7 @@
     <attributeMappings>
         <attributeName>ServiceCustomerVerification_16jHn00000005qM.Verify_SMS_Code_MFA_179Hn000000VXvs.output_isVerified</attributeName>
         <attributeType>CustomPluginFunctionAttribute</attributeType>
-        <mappingTargetName>isVerifiedNew</mappingTargetName>
+        <mappingTargetName>isVerified</mappingTargetName>
         <mappingType>Variable</mappingType>
     </attributeMappings>
     <attributeMappings>
@@ -54,7 +54,7 @@
         <localDeveloperName>Escalation</localDeveloperName>
         <masterLabel>Escalation</masterLabel>
         <pluginType>Topic</pluginType>
-        <scope>Your job is to transfer the conversation to a live agent if a user explicitly asks for human assistance or has a complex issue that requires human intervention. If escalation fails, ask the user whether they would like to log a support case so the issue is recorded for follow-up.</scope>
+        <scope>This topic must be triggered automatically at conversation start without waiting for customer input or intent.</scope>
         <source>SvcCopilotTmpl__Escalation</source>
     </localTopics>
     <localTopics>
@@ -130,7 +130,7 @@
     <localTopics>
         <fullName>ServiceCustomerVerification_16jHn00000005qM</fullName>
         <canEscalate>false</canEscalate>
-        <description>Use this topic when a customer initiates a conversation and needs to verify their identity before accessing any account information or assistance. This topic should always run first at the start of every interaction.</description>
+        <description>Use this topic immediately at the start of every new conversation before any other topic is used, regardless of what the customer says.</description>
         <developerName>ServiceCustomerVerification_16jHn00000005qM</developerName>
         <genAiPluginInstructions>
             <description>Always run this topic first at the start of every conversation before any other topic is accessed.</description>
@@ -230,7 +230,7 @@
         <localDeveloperName>ServiceCustomerVerification</localDeveloperName>
         <masterLabel>Customer Verification</masterLabel>
         <pluginType>Topic</pluginType>
-        <scope>This topic is responsible solely for verifying the customer&apos;s identity via SMS code. It sends a verification code to the customer&apos;s registered mobile number, validates the code they provide, and confirms whether they are authenticated. It does not answer questions or provide account assistance — its only function is identity verification before handing off to other topics.</scope>
+        <scope>This topic must be triggered automatically at conversation start without waiting for customer input or intent.</scope>
         <source>SvcCopilotTmpl__ServiceCustomerVerification</source>
     </localTopics>
     <masterLabel>Agentforce Service Agent</masterLabel>
@@ -259,64 +259,15 @@
         <surface>SurfaceAction__Messaging</surface>
         <surfaceType>Messaging</surfaceType>
     </plannerSurfaces>
-    <plannerSurfaces>
-        <adaptiveResponseAllowed>true</adaptiveResponseAllowed>
-        <callRecordingAllowed>false</callRecordingAllowed>
-        <outboundRouteConfigs>
-            <escalationMessage>Routing this call to an associate</escalationMessage>
-            <outboundRouteName>Outbound_route_VoiceCall_to_Queue</outboundRouteName>
-            <outboundRouteType>OmniChannelFlow</outboundRouteType>
-        </outboundRouteConfigs>
-        <surface>SurfaceAction__Telephony</surface>
-        <surfaceType>Telephony</surfaceType>
-    </plannerSurfaces>
-    <plannerType>Atlas__VoiceAgent</plannerType>
+    <plannerType>AiCopilot__ReAct</plannerType>
     <ruleExpressionAssignments>
-        <ruleExpressionName>IsVerifiedNew</ruleExpressionName>
+        <ruleExpressionName>Isverified</ruleExpressionName>
         <targetName>Escalation_16jHn00000005qM</targetName>
         <targetType>Plugin</targetType>
     </ruleExpressionAssignments>
     <ruleExpressionAssignments>
-        <ruleExpressionName>IsVerifiedNew</ruleExpressionName>
+        <ruleExpressionName>Isverified</ruleExpressionName>
         <targetName>GeneralFAQ_16jHn00000005qM</targetName>
         <targetType>Plugin</targetType>
     </ruleExpressionAssignments>
-    <ruleExpressions>
-        <conditions>
-            <leftOperand>isVerifiedNew</leftOperand>
-            <leftOperandType>Variable</leftOperandType>
-            <operator>equal</operator>
-            <rightOperandValue>true</rightOperandValue>
-        </conditions>
-        <expressionLabel>IsVerifiedNew?</expressionLabel>
-        <expressionName>IsVerifiedNew</expressionName>
-        <expressionType>sel</expressionType>
-    </ruleExpressions>
-    <ruleExpressions>
-        <conditions>
-            <leftOperand>isVerified</leftOperand>
-            <leftOperandType>Variable</leftOperandType>
-            <operator>equal</operator>
-            <rightOperandValue>true</rightOperandValue>
-        </conditions>
-        <expression>Verified_User</expression>
-        <expressionLabel>Verified User</expressionLabel>
-        <expressionName>Verified_User</expressionName>
-        <expressionType>sel</expressionType>
-    </ruleExpressions>
-    <voiceDefinition>
-        <developerName>Agentforce_Service_Agent</developerName>
-        <inboundFillerWordsBool>false</inboundFillerWordsBool>
-        <inboundKeywords>{&quot;keyterm&quot;:[]}</inboundKeywords>
-        <inboundModel>sfdc_ai__Default_Nova_2_PhoneCall</inboundModel>
-        <label>Agentforce Service Agent</label>
-        <languageCode>en_US</languageCode>
-        <outboundModel>sfdc_ai__Default_Eleven_Flash_V2_5</outboundModel>
-        <outboundSimilarity>0.55</outboundSimilarity>
-        <outboundSpeedNum>0.85</outboundSpeedNum>
-        <outboundStability>0.53</outboundStability>
-        <outboundVoice>Cassidy</outboundVoice>
-        <pronunciationDict>{&quot;pronunciations&quot;:[]}</pronunciationDict>
-        <voiceIdentifier>56AoDkrOh6qfVPDXZ7Pt</voiceIdentifier>
-    </voiceDefinition>
 </GenAiPlannerBundle>
