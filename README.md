@@ -32,7 +32,7 @@ Work through each item before deploying. Skipping any of these is the most commo
 
 This package depends on two Salesforce managed packages. Deployment will fail if either is missing.
 
-- [ ] **Service Copilot Template** (namespace: `SvcCopilotTmpl__`) — Provides the base templates for the Verification, FAQ, and Escalation topics, and the `VerifyCode` flow that the `Verify_SMS_Code_MFA` flow overrides.
+- [ ] **Service Copilot Template** (namespace: `SvcCopilotTmpl__`) — Provides the base templates for the Verification, FAQ, and Escalation topics, and the `VerifyCode` flow that the `Sean_SDO_Verify_SMS_Code_MFA` flow overrides.
 - [ ] **Employee Copilot** (namespace: `EmployeeCopilot__`) — Provides the `AnswerQuestionsWithKnowledge` action used by the FAQ topic.
 
 To check if these are installed: Setup → Installed Packages. If they are missing, contact your Salesforce AE or admin — they are part of the Agentforce for Service licensing bundle.
@@ -78,8 +78,8 @@ sf project deploy start \
 
 ```bash
 sf project deploy start \
-  --source-dir metadata/flows/Send_SMS_Verification.flow \
-  --source-dir metadata/flows/Verify_SMS_Code_MFA.flow \
+  --source-dir metadata/flows/Sean_SDO_Send_SMS_Verification.flow \
+  --source-dir metadata/flows/Sean_SDO_Verify_SMS_Code_MFA.flow \
   --target-org <YOUR_ORG_ALIAS>
 ```
 
@@ -113,8 +113,8 @@ These steps must be done in your Salesforce org after the deploy commands succee
 ### Step 2 — Activate the flows
 
 1. Go to Setup → **Flows**.
-2. Find `Send_SMS_Verification` → open it → click **Activate**.
-3. Find `Verify_SMS_Code_MFA` → open it → click **Activate**.
+2. Find `Sean_SDO_Send_SMS_Verification` → open it → click **Activate**.
+3. Find `Sean_SDO_Verify_SMS_Code_MFA` → open it → click **Activate**.
 
 ### Step 3 — Set your Messaging Channel ID
 
@@ -196,8 +196,8 @@ If you do use voice, update the outbound route name `Outbound_route_VoiceCall_to
 
 | File | Purpose |
 |---|---|
-| `metadata/flows/Send_SMS_Verification.flow` | Generates the OTP, looks up or creates the MessagingEndUser, and sends the SMS |
-| `metadata/flows/Verify_SMS_Code_MFA.flow` | Validates the code the customer provides |
+| `metadata/flows/Sean_SDO_Send_SMS_Verification.flow` | Generates the OTP, looks up or creates the MessagingEndUser, and sends the SMS |
+| `metadata/flows/Sean_SDO_Verify_SMS_Code_MFA.flow` | Validates the code the customer provides |
 | `metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition` | The SMS message template ("Your verification code is…") |
 | `metadata/labels/CustomLabels.labels` | `SMS_Messaging_Channel_Id` — holds your org's Messaging Channel ID |
 | `metadata/objects/MessagingSession.object` | Adds `Input_Phone__c` field to MessagingSession (used for MIAW phone capture) |

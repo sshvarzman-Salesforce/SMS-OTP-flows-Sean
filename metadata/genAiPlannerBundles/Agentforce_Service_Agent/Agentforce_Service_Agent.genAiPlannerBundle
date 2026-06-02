@@ -185,11 +185,11 @@
             <fullName>Send_SMS_Verification_179Hn000000VXvs</fullName>
             <description>This action is launched in order to send the customer verification code via SMS for multi factor authentication</description>
             <developerName>Send_SMS_Verification_179Hn000000VXvs</developerName>
-            <invocationTarget>Send_SMS_Verification</invocationTarget>
+            <invocationTarget>Sean_SDO_Send_SMS_Verification</invocationTarget>
             <invocationTargetType>flow</invocationTargetType>
             <isConfirmationRequired>false</isConfirmationRequired>
             <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
-            <localDeveloperName>Send_SMS_Verification</localDeveloperName>
+            <localDeveloperName>Sean_SDO_Send_SMS_Verification</localDeveloperName>
             <mappingAttributes>
                 <label>recordId</label>
                 <name>input_recordId</name>
@@ -208,11 +208,11 @@
             <fullName>Verify_SMS_Code_MFA_179Hn000000VXvs</fullName>
             <description>This is the action that will verify if the code the customer gives back is the correct verification code</description>
             <developerName>Verify_SMS_Code_MFA_179Hn000000VXvs</developerName>
-            <invocationTarget>Verify_SMS_Code_MFA</invocationTarget>
+            <invocationTarget>Sean_SDO_Verify_SMS_Code_MFA</invocationTarget>
             <invocationTargetType>flow</invocationTargetType>
             <isConfirmationRequired>false</isConfirmationRequired>
             <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
-            <localDeveloperName>Verify_SMS_Code_MFA</localDeveloperName>
+            <localDeveloperName>Sean_SDO_Verify_SMS_Code_MFA</localDeveloperName>
             <mappingAttributes>
                 <label>authenticationKey</label>
                 <name>input_authenticationKey</name>
