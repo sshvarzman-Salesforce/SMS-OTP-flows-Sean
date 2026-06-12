@@ -53,7 +53,9 @@ sf project deploy start \
 
 ## Required post-deploy setup
 
-### 1) Activate SMS template component
+### 1) Activate SMS template component (required)
+
+Important: metadata deployment does **not** reliably activate the message definition in all orgs. Treat this as a mandatory manual step.
 
 1. Setup → **Messaging Settings** → **Message Definitions**.
 2. Find **OTP SMS**.
@@ -67,12 +69,21 @@ sf project deploy start \
 
 ### 3) Set channel ID in custom label
 
-Because every org has its own Messaging Channel, set it manually:
+Because every org has its own Messaging Channel, set it manually once:
 
 1. Setup → **Custom Labels**.
 2. Edit `SMS_Messaging_Channel_Id`.
 3. Replace `REPLACE_WITH_YOUR_MESSAGING_CHANNEL_ID` with your org’s SMS channel Id.
 4. Save.
+
+Why this matters:
+- The send flow reads `$Label.SMS_Messaging_Channel_Id` when creating/using `MessagingEndUser`.
+- This is the **single placeholder value** to update per org.
+- Updating this one label automatically applies everywhere the flow references the channel id.
+
+Quick verify:
+- Open flow `Sean_SDO_Send_SMS_Verification`.
+- Confirm `Create_Messaging_User -> MessagingChannelId` uses `$Label.SMS_Messaging_Channel_Id` (not a hardcoded Id).
 
 ---
 
@@ -96,3 +107,4 @@ Because every org has its own Messaging Channel, set it manually:
 | `Cannot find object: SvcCopilotTmpl__VerifyCode` | Managed dependency missing | Install `SvcCopilotTmpl__` |
 | `Invalid MessagingChannelId` | Label still placeholder or wrong Id | Update `SMS_Messaging_Channel_Id` |
 | OTP flow runs but no SMS sent | Template/flow not active | Activate `OTP_SMS` and both flows |
+| `OTP_SMS` deployed but inactive | Message definitions not auto-activated by deploy | Activate `OTP_SMS` manually in Messaging Settings |
