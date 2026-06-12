@@ -14,12 +14,8 @@
         <name>ConversationMessageDefinition</name>
     </types>
     <types>
-        <members>Agentforce_Service_Agent</members>
-        <name>GenAiPlannerBundle</name>
-    </types>
-
-    <types>
         <members>SMS_Messaging_Channel_Id</members>
         <name>CustomLabel</name>
-    </types>    <version>66.0</version>
+    </types>
+    <version>66.0</version>
 </Package>
