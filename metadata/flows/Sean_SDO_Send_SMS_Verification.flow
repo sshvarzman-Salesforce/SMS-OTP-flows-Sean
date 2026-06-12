@@ -247,7 +247,7 @@
         <inputAssignments>
             <field>MessagingChannelId</field>
             <value>
-                <elementReference>$Label.SMS_Messaging_Channel_Id</elementReference>
+                <elementReference>Input_Your_Messaging_Channel_ID</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -400,6 +400,17 @@
         <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Input your Messaging Channel ID (18-char Salesforce Id) for the target org.</description>
+        <name>Input_Your_Messaging_Channel_ID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>REPLACE_WITH_YOUR_MESSAGING_CHANNEL_ID</stringValue>
+        </value>
     </variables>
     <variables>
         <name>MessagingUser</name>

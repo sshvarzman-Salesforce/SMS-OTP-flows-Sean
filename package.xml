@@ -13,9 +13,5 @@
         <members>OTP_SMS</members>
         <name>ConversationMessageDefinition</name>
     </types>
-    <types>
-        <members>SMS_Messaging_Channel_Id</members>
-        <name>CustomLabel</name>
-    </types>
     <version>66.0</version>
 </Package>

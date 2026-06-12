@@ -6,7 +6,6 @@ This repo deploys only the core SMS OTP verification assets:
 - `Sean_SDO_Verify_SMS_Code_MFA` flow
 - `MessagingSession.Input_Phone__c` custom field
 - `OTP_SMS` conversation message definition (SMS template)
-- `SMS_Messaging_Channel_Id` custom label
 
 It **does not** deploy any Agentforce planner bundle / agent actions.
 
@@ -43,7 +42,6 @@ Deploy metadata:
 sf project deploy start \
   --source-dir metadata/objects/MessagingSession.object \
   --source-dir metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition \
-  --source-dir metadata/labels/CustomLabels.labels \
   --source-dir metadata/flows/Sean_SDO_Send_SMS_Verification.flow \
   --source-dir metadata/flows/Sean_SDO_Verify_SMS_Code_MFA.flow \
   --target-org <YOUR_ORG_ALIAS>
@@ -67,23 +65,23 @@ Important: metadata deployment does **not** reliably activate the message defini
 2. Activate `Sean_SDO_Send_SMS_Verification`.
 3. Activate `Sean_SDO_Verify_SMS_Code_MFA`.
 
-### 3) Set channel ID in custom label
+### 3) Set channel ID input variable in send flow
 
-Because every org has its own Messaging Channel, set it manually once:
+Because every org has its own Messaging Channel, set it in the flow variable:
 
-1. Setup → **Custom Labels**.
-2. Edit `SMS_Messaging_Channel_Id`.
-3. Replace `REPLACE_WITH_YOUR_MESSAGING_CHANNEL_ID` with your org’s SMS channel Id.
-4. Save.
+1. Setup → **Flows**.
+2. Open `Sean_SDO_Send_SMS_Verification`.
+3. Update variable `Input_Your_Messaging_Channel_ID` default value with your org’s Messaging Channel Id.
+4. Save and activate the flow.
 
 Why this matters:
-- The send flow reads `$Label.SMS_Messaging_Channel_Id` when creating/using `MessagingEndUser`.
+- The send flow reads `Input_Your_Messaging_Channel_ID` when creating/using `MessagingEndUser`.
 - This is the **single placeholder value** to update per org.
-- Updating this one label automatically applies everywhere the flow references the channel id.
+- Updating this value applies everywhere the flow references the channel id.
 
 Quick verify:
 - Open flow `Sean_SDO_Send_SMS_Verification`.
-- Confirm `Create_Messaging_User -> MessagingChannelId` uses `$Label.SMS_Messaging_Channel_Id` (not a hardcoded Id).
+- Confirm `Create_Messaging_User -> MessagingChannelId` uses `Input_Your_Messaging_Channel_ID` (not a hardcoded Id).
 
 ---
 
@@ -95,7 +93,6 @@ Quick verify:
 | `metadata/flows/Sean_SDO_Verify_SMS_Code_MFA.flow` | Verifies code entered by customer |
 | `metadata/objects/MessagingSession.object` | Adds `Input_Phone__c` for messaging pre-chat phone capture |
 | `metadata/conversationMessageDefinitions/OTP_SMS.conversationMessageDefinition` | SMS template used by send flow |
-| `metadata/labels/CustomLabels.labels` | Stores per-org SMS channel Id |
 | `package.xml` | Manifest for these core components |
 
 ---
@@ -105,6 +102,6 @@ Quick verify:
 | Error | Likely cause | Fix |
 |---|---|---|
 | `Cannot find object: SvcCopilotTmpl__VerifyCode` | Managed dependency missing | Install `SvcCopilotTmpl__` |
-| `Invalid MessagingChannelId` | Label still placeholder or wrong Id | Update `SMS_Messaging_Channel_Id` |
+| `Invalid MessagingChannelId` | Flow variable still placeholder or wrong Id | Update `Input_Your_Messaging_Channel_ID` in `Sean_SDO_Send_SMS_Verification` |
 | OTP flow runs but no SMS sent | Template/flow not active | Activate `OTP_SMS` and both flows |
 | `OTP_SMS` deployed but inactive | Message definitions not auto-activated by deploy | Activate `OTP_SMS` manually in Messaging Settings |
